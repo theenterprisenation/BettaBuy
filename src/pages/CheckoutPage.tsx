@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createOrder, updateOrderPaymentStatus } from '../lib/orders';
 import { DeliveryOptions } from '../components/checkout/DeliveryOptions';
 import { PaystackButton } from '../components/checkout/PaystackButton';
@@ -31,6 +31,21 @@ export function CheckoutPage() {
   }
   
   const { product, quantity } = checkoutData;
+
+  // Add query to get vendor's subaccount code
+  const { data: vendorBankDetails } = useQuery({
+    queryKey: ['vendorBankDetails', product.vendor_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('vendor_bank_details')
+        .select('paystack_subaccount_code')
+        .eq('vendor_id', product.vendor_id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const createOrderMutation = useMutation({
     mutationFn: async (paymentReference: string) => {
@@ -178,6 +193,7 @@ export function CheckoutPage() {
                   onClose={handlePaymentClose}
                   disabled={!deliveryDetails || createOrderMutation.isPending}
                   loading={paymentProcessing}
+                  subaccountCode={vendorBankDetails?.paystack_subaccount_code}
                 />
               )}
 

@@ -118,6 +118,13 @@ export function VendorOnboardingPage() {
         <p className="mt-2 text-lg text-gray-600">
           Join our platform and start selling your products to group buyers
         </p>
+        <div className="mt-4 bg-primary-50 border border-primary-200 rounded-lg p-4 text-primary-800">
+          <h3 className="font-semibold">Important Fee Information</h3>
+          <p className="text-sm mt-1">
+            Our platform charges a 5% fee on each successful transaction. Please factor this into your product pricing.
+            You will receive 95% of each payment directly to your registered bank account.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow">

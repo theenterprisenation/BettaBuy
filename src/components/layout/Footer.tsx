@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Store } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 export function Footer() {
   return (
@@ -71,6 +72,29 @@ export function Footer() {
                 Lagos, Nigeria
               </li>
             </ul>
+          </div>
+        </div>
+
+        {/* Vendor CTA Section */}
+        <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-white mb-4">Become a Vendor</h3>
+            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+              Join our platform as a vendor and reach more customers through group buying. Enjoy secure payments and a simple selling process.
+            </p>
+            <Link to="/vend">
+              <Button 
+                variant="primary" 
+                size="lg"
+                className="group relative overflow-hidden shadow-lg hover:shadow-primary-500/25 transition-all duration-300"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 transition-transform group-hover:scale-105 duration-300" />
+                <span className="relative flex items-center">
+                  <Store className="w-5 h-5 mr-2" />
+                  Start Selling Today
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
 

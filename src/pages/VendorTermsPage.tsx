@@ -31,11 +31,12 @@ export function VendorTermsPage() {
         </section>
 
         <section className="mt-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Commission and Fees</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Platform Fees and Pricing</h2>
           <ul className="list-disc pl-6 text-gray-600">
-            <li>Platform commission: 5% of each successful group buy</li>
-            <li>Payment processing fees: 1.5% + ₦100</li>
-            <li>Optional premium features available for additional fees</li>
+            <li><strong>Platform fee: 5% of each successful transaction</strong></li>
+            <li>Vendors receive 95% of the payment amount</li>
+            <li>Vendors should factor the 5% platform fee into their base pricing</li>
+            <li>Payment processing is handled securely through Paystack</li>
             <li>All fees are subject to applicable taxes</li>
           </ul>
         </section>

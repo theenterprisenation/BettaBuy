@@ -13,7 +13,7 @@ export function FAQPage() {
     },
     {
       question: 'How does payment work?',
-      answer: 'Payment is required 2 days before the product sharing day. We accept various payment methods including bank transfers and cards. All payments are secured and processed through our trusted payment partners.'
+      answer: 'Payment is required 2 days before the product sharing day. We accept various payment methods including bank transfers and cards through our secure payment partner, Paystack. For vendors, we charge a 5% platform fee, with 95% of the payment going directly to the vendor\'s account.'
     },
     {
       question: 'What happens if the minimum group size isn\'t reached?',

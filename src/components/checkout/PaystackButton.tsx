@@ -10,6 +10,7 @@ interface PaystackButtonProps {
   onClose: () => void;
   disabled?: boolean;
   loading?: boolean;
+  subaccountCode?: string; // Add subaccount code prop
 }
 
 export function PaystackButton({
@@ -18,7 +19,8 @@ export function PaystackButton({
   onSuccess,
   onClose,
   disabled,
-  loading
+  loading,
+  subaccountCode
 }: PaystackButtonProps) {
   const config = {
     reference: new Date().getTime().toString(),
@@ -26,6 +28,17 @@ export function PaystackButton({
     amount: Math.round(amount * 100), // Convert to kobo
     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
     currency: 'NGN',
+    ...(subaccountCode && {
+      split: {
+        type: "percentage",
+        subaccounts: [
+          {
+            subaccount: subaccountCode,
+            share: 95 // Vendor gets 95% of the payment
+          }
+        ]
+      }
+    })
   };
 
   const initializePayment = usePaystackPayment(config);

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { Hero } from './components/home/Hero';
+import { YoutubeExplainer } from './components/home/YoutubeExplainer';
 import { AuthForm } from './components/auth/AuthForm';
 import { AuthCallback } from './components/auth/AuthCallback';
 import { ProductsPage } from './pages/ProductsPage';
@@ -37,7 +38,12 @@ export default function App() {
       <Navbar />
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Hero />} />
+          <Route path="/" element={
+            <>
+              <Hero />
+              <YoutubeExplainer />
+            </>
+          } />
           <Route path="/auth" element={<AuthForm />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/products" element={<ProductsPage />} />
