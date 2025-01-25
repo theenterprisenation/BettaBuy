@@ -18,6 +18,7 @@ interface VendorFormData {
   utilityBill: File | null;
   nationalId: File | null;
   termsAccepted: boolean;
+  logo: File | null;
 }
 
 export function VendorOnboardingPage() {
@@ -35,6 +36,7 @@ export function VendorOnboardingPage() {
     utilityBill: null,
     nationalId: null,
     termsAccepted: false,
+    logo: null,
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof VendorFormData, string>>>({});
@@ -238,6 +240,17 @@ export function VendorOnboardingPage() {
           {errors.businessName && (
             <p className="mt-1 text-sm text-danger-600">{errors.businessName}</p>
           )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Business Logo
+          </label>
+          <ImageUpload
+            onUpload={(url) => setFormData(prev => ({ ...prev, logo_url: url }))}
+            currentImage={formData.logo_url}
+            folder="logos"
+          />
         </div>
 
         <div>

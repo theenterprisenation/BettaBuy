@@ -6,6 +6,7 @@ import { useProducts } from '../hooks/useProducts';
 export function ProductsPage() {
   const { products, loading, error } = useProducts();
   const [search, setSearch] = useState('');
+  const [vendorSearch, setVendorSearch] = useState('');
   const [sortBy, setSortBy] = useState('latest');
   const [location, setLocation] = useState({ state: '', city: '' });
 
@@ -20,8 +21,16 @@ export function ProductsPage() {
       filtered = filtered.filter(
         (product) =>
           product.name.toLowerCase().includes(searchLower) ||
-          product.description.toLowerCase().includes(searchLower) ||
-          product.vendors.business_name.toLowerCase().includes(searchLower)
+          product.description.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Apply vendor search filter
+    if (vendorSearch) {
+      const vendorSearchLower = vendorSearch.toLowerCase();
+      filtered = filtered.filter(
+        (product) =>
+          product.vendors.business_name.toLowerCase().includes(vendorSearchLower)
       );
     }
 
@@ -63,7 +72,7 @@ export function ProductsPage() {
     }
 
     return filtered;
-  }, [products, search, sortBy, location]);
+  }, [products, search, vendorSearch, sortBy, location]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -75,6 +84,8 @@ export function ProductsPage() {
       <SearchFilters
         search={search}
         setSearch={setSearch}
+        vendorSearch={vendorSearch}
+        setVendorSearch={setVendorSearch}
         sortBy={sortBy}
         setSortBy={setSortBy}
         location={location}
