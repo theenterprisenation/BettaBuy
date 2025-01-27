@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, UserPlus, LogIn } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Store } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
 
+type AuthMode = 'user' | 'vendor';
+type FormMode = 'signin' | 'signup';
+
 export function AuthForm() {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode>('user');
+  const [formMode, setFormMode] = useState<FormMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -18,20 +22,40 @@ export function AuthForm() {
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (formMode === 'signup') {
         const { error } = await supabase.auth.signUp({
           email,
           password,
         });
         if (error) throw error;
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: { user }, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+        
         if (error) throw error;
+
+        // If vendor login, check if user is actually a vendor
+        if (authMode === 'vendor') {
+          const { data: vendorData, error: vendorError } = await supabase
+            .from('vendors')
+            .select('id')
+            .eq('user_id', user?.id)
+            .single();
+
+          if (vendorError || !vendorData) {
+            throw new Error('Account not found. Please sign up as a vendor first.');
+          }
+        }
       }
-      navigate('/');
+      
+      // Redirect based on auth mode
+      if (authMode === 'vendor') {
+        navigate('/vendor');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -43,17 +67,53 @@ export function AuthForm() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
+          <div className="flex justify-center space-x-4 mb-6">
+            <button
+              onClick={() => setAuthMode('user')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                authMode === 'user'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Mail className="inline-block w-5 h-5 mr-2" />
+              User
+            </button>
+            <button
+              onClick={() => setAuthMode('vendor')}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                authMode === 'vendor'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Store className="inline-block w-5 h-5 mr-2" />
+              Vendor
+            </button>
+          </div>
+
           <h2 className="text-3xl font-extrabold text-gray-900">
-            {isSignUp ? 'Create your account' : 'Sign in to your account'}
+            {formMode === 'signup' 
+              ? `Create your ${authMode} account` 
+              : `Sign in to your ${authMode} account`}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="font-medium text-primary-600 hover:text-primary-500"
-            >
-              {isSignUp ? 'Sign in' : 'Sign up'}
-            </button>
+            {formMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
+            {authMode === 'vendor' && formMode === 'signup' ? (
+              <a
+                href="/vend"
+                className="font-medium text-primary-600 hover:text-primary-500"
+              >
+                Register as vendor
+              </a>
+            ) : (
+              <button
+                onClick={() => setFormMode(formMode === 'signup' ? 'signin' : 'signup')}
+                className="font-medium text-primary-600 hover:text-primary-500"
+              >
+                {formMode === 'signup' ? 'Sign in' : 'Sign up'}
+              </button>
+            )}
           </p>
         </div>
 
@@ -114,7 +174,7 @@ export function AuthForm() {
                 >
                   {loading ? (
                     <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : isSignUp ? (
+                  ) : formMode === 'signup' ? (
                     <>
                       <UserPlus className="w-5 h-5 mr-2" />
                       Sign Up

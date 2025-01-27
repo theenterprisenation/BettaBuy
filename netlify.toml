@@ -28,3 +28,18 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Content-Security-Policy = "frame-ancestors 'none'"
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Email forwarding configuration
+[[redirects]]
+  from = "/email/*"
+  status = 200
+  force = true
+  conditions = {Role = ["admin", "support"]}
+
+[email]
+  [email.support]
+    from = "support@foodrient.com"
+    subject = "Support Request"
+  [email.resolutions]
+    from = "resolutions@foodrient.com"
+    subject = "Resolution Request"

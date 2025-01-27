@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { UsersList } from '../components/admin/UsersList';
 import { VendorManagement } from '../components/admin/VendorManagement';
+import { SupportManagement } from '../components/admin/SupportManagement';
 import { DeliveryMonitoring } from '../components/admin/DeliveryMonitoring';
 import { ContentManager } from '../components/admin/ContentManager';
-import { Users, Store, BarChart, Settings, Truck } from 'lucide-react';
+import { Users, Store, BarChart, Settings, Truck, Headset } from 'lucide-react';
 
 export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
@@ -11,6 +12,7 @@ export function AdminDashboard() {
   const tabs = [
     { id: 'users', name: 'Users', icon: Users },
     { id: 'vendors', name: 'Vendors', icon: Store },
+    { id: 'support', name: 'Support Staff', icon: Headset },
     { id: 'deliveries', name: 'Deliveries', icon: Truck },
     { id: 'content', name: 'Content', icon: Settings },
     { id: 'analytics', name: 'Analytics', icon: BarChart },
@@ -70,6 +72,7 @@ export function AdminDashboard() {
       <div>
         {activeTab === 'users' && <UsersList />}
         {activeTab === 'vendors' && <VendorManagement />}
+        {activeTab === 'support' && <SupportManagement />}
         {activeTab === 'deliveries' && <DeliveryMonitoring />}
         {activeTab === 'content' && <ContentManager />}
         {activeTab === 'analytics' && (

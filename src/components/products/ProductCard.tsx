@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Users, CheckCircle, AlertTriangle, MapPin } from 'lucide-react';
+import { Clock, Users, CheckCircle, AlertTriangle, MapPin, Star } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { Product } from '../../types';
 
@@ -10,6 +10,8 @@ interface ProductCardProps {
       business_name: string;
       logo_url: string | null;
       is_verified: boolean;
+      average_rating: number;
+      total_ratings: number;
     };
   };
 }
@@ -63,6 +65,25 @@ export function ProductCard({ product }: ProductCardProps) {
               <MapPin className="w-4 h-4 mr-1" />
               {product.city}, {product.state}
             </div>
+            {product.vendors.average_rating > 0 && (
+              <div className="flex items-center mt-1">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < Math.floor(product.vendors.average_rating)
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="ml-1 text-sm text-gray-600">
+                  {product.vendors.average_rating.toFixed(1)} ({product.vendors.total_ratings})
+                </span>
+              </div>
+            )}
           </div>
           <div className="text-right">
             <p className="text-lg font-bold text-primary-600">${product.price}</p>

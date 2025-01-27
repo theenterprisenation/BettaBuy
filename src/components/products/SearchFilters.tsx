@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, SlidersHorizontal, MapPin, Store } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, Store, Calendar } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 interface SearchFiltersProps {
@@ -14,6 +14,11 @@ interface SearchFiltersProps {
     city: string;
   };
   setLocation: (location: { state: string; city: string }) => void;
+  shareDateRange: {
+    start: string;
+    end: string;
+  };
+  setShareDateRange: (range: { start: string; end: string }) => void;
 }
 
 export function SearchFilters({ 
@@ -24,7 +29,9 @@ export function SearchFilters({
   sortBy, 
   setSortBy,
   location,
-  setLocation 
+  setLocation,
+  shareDateRange,
+  setShareDateRange
 }: SearchFiltersProps) {
   return (
     <div className="mb-6 space-y-4">
@@ -98,6 +105,38 @@ export function SearchFilters({
             <option value="slots">Available Slots</option>
             <option value="ending-soon">Ending Soon</option>
           </select>
+        </div>
+      </div>
+
+      {/* Share Date Range Filter */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex items-center space-x-2">
+          <Calendar className="h-5 w-5 text-gray-400" />
+          <div className="flex-1">
+            <label htmlFor="share-date-start" className="block text-sm font-medium text-gray-700">
+              Share Date From
+            </label>
+            <input
+              type="date"
+              id="share-date-start"
+              value={shareDateRange.start}
+              onChange={(e) => setShareDateRange({ ...shareDateRange, start: e.target.value })}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+            />
+          </div>
+          <div className="flex-1">
+            <label htmlFor="share-date-end" className="block text-sm font-medium text-gray-700">
+              To
+            </label>
+            <input
+              type="date"
+              id="share-date-end"
+              value={shareDateRange.end}
+              onChange={(e) => setShareDateRange({ ...shareDateRange, end: e.target.value })}
+              min={shareDateRange.start}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+            />
+          </div>
         </div>
       </div>
     </div>

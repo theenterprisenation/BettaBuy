@@ -9,9 +9,11 @@ import { AuthCallback } from './components/auth/AuthCallback';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { BulkOrderPage } from './pages/BulkOrderPage';
 import { VendorDashboard } from './pages/VendorDashboard';
 import { UserDashboard } from './pages/UserDashboard';
 import { AdminDashboard } from './pages/AdminDashboard';
+import { SupportDashboard } from './pages/SupportDashboard';
 import { ContactPage } from './pages/ContactPage';
 import { FAQPage } from './pages/FAQPage';
 import { PrivacyPage } from './pages/PrivacyPage';
@@ -22,6 +24,7 @@ import { WorkxPage } from './pages/WorkxPage';
 import { PrivateRoute } from './components/auth/PrivateRoute';
 import { AdminRoute } from './components/auth/AdminRoute';
 import { VendorRoute } from './components/auth/VendorRoute';
+import { SupportRoute } from './components/auth/SupportRoute';
 import { useContent } from './contexts/ContentContext';
 import { Button } from './components/ui/Button';
 
@@ -47,7 +50,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Routes>
-        {/* Hidden admin routes - no layout */}
+        {/* Hidden admin/support routes - no layout */}
         <Route path="/worx" element={<WorkxPage />} />
         <Route path="/admin" element={<Navigate to="/worx" replace />} />
         
@@ -66,9 +69,11 @@ export default function App() {
 
         {/* Protected routes with layout */}
         <Route path="/checkout" element={<Layout><PrivateRoute><CheckoutPage /></PrivateRoute></Layout>} />
+        <Route path="/bulk-order" element={<Layout><PrivateRoute><BulkOrderPage /></PrivateRoute></Layout>} />
         <Route path="/dashboard" element={<Layout><PrivateRoute><UserDashboard /></PrivateRoute></Layout>} />
         <Route path="/vendor" element={<Layout><VendorRoute><VendorDashboard /></VendorRoute></Layout>} />
         <Route path="/admin-dashboard" element={<Layout><AdminRoute><AdminDashboard /></AdminRoute></Layout>} />
+        <Route path="/support-dashboard" element={<Layout><SupportRoute><SupportDashboard /></SupportRoute></Layout>} />
 
         {/* 404 catch-all route */}
         <Route path="*" element={

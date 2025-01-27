@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
@@ -24,6 +24,8 @@ interface VendorFormData {
 
 export function VendorOnboardingPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref');
   const [formData, setFormData] = useState<VendorFormData>({
     firstName: '',
     lastName: '',
@@ -44,7 +46,7 @@ export function VendorOnboardingPage() {
 
   const createVendorMutation = useMutation({
     mutationFn: async (data: VendorFormData) => {
-      // First, call the register_vendor function
+      // First, call the register_vendor function with referral code
       const { data: vendorData, error: vendorError } = await supabase.rpc('register_vendor', {
         vendor_email: data.email,
         vendor_password: data.password,
@@ -52,7 +54,8 @@ export function VendorOnboardingPage() {
         description: `${data.firstName} ${data.lastName}'s Business`,
         address: data.businessAddress,
         state: data.state,
-        city: data.city
+        city: data.city,
+        referral_code: referralCode
       });
 
       if (vendorError) throw vendorError;

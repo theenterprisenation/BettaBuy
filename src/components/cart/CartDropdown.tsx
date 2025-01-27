@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Trash2, X } from 'lucide-react';
+import { ShoppingCart, Trash2, X, Users } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { Button } from '../ui/Button';
 
@@ -17,6 +17,11 @@ export function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
 
   const handleCheckout = () => {
     navigate('/checkout');
+    onClose();
+  };
+
+  const handleBulkOrder = () => {
+    navigate('/bulk-order');
     onClose();
   };
 
@@ -94,12 +99,22 @@ export function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
                 <p>Total</p>
                 <p>${totalAmount.toFixed(2)}</p>
               </div>
-              <Button
-                className="w-full mt-4"
-                onClick={handleCheckout}
-              >
-                Proceed to Checkout
-              </Button>
+              <div className="mt-4 space-y-2">
+                <Button
+                  className="w-full"
+                  onClick={handleCheckout}
+                >
+                  Proceed to Checkout
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleBulkOrder}
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Create Bulk Order
+                </Button>
+              </div>
             </div>
           </>
         )}

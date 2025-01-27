@@ -9,6 +9,10 @@ export function ProductsPage() {
   const [vendorSearch, setVendorSearch] = useState('');
   const [sortBy, setSortBy] = useState('latest');
   const [location, setLocation] = useState({ state: '', city: '' });
+  const [shareDateRange, setShareDateRange] = useState({
+    start: '',
+    end: ''
+  });
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -46,6 +50,20 @@ export function ProductsPage() {
       );
     }
 
+    // Apply share date range filter
+    if (shareDateRange.start) {
+      const startDate = new Date(shareDateRange.start);
+      filtered = filtered.filter(
+        (product) => new Date(product.share_date_start) >= startDate
+      );
+    }
+    if (shareDateRange.end) {
+      const endDate = new Date(shareDateRange.end);
+      filtered = filtered.filter(
+        (product) => new Date(product.share_date_end) <= endDate
+      );
+    }
+
     // Apply sorting
     switch (sortBy) {
       case 'price-low':
@@ -72,7 +90,7 @@ export function ProductsPage() {
     }
 
     return filtered;
-  }, [products, search, vendorSearch, sortBy, location]);
+  }, [products, search, vendorSearch, sortBy, location, shareDateRange]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -90,6 +108,8 @@ export function ProductsPage() {
         setSortBy={setSortBy}
         location={location}
         setLocation={setLocation}
+        shareDateRange={shareDateRange}
+        setShareDateRange={setShareDateRange}
       />
 
       <ProductGrid products={filteredProducts} loading={loading} error={error} />
