@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/Button';
 import { Store, Upload, AlertCircle } from 'lucide-react';
+import { ImageUpload } from '../components/shared/ImageUpload';
 
 interface VendorFormData {
   firstName: string;

@@ -2,10 +2,22 @@
   publish = "dist"
   command = "npm run build"
 
+# Hidden admin route redirect - must come before the catch-all
+[[redirects]]
+  from = "/admin"
+  to = "/worx"
+  status = 302
+  force = true
+
+# This redirect rule handles SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = true
+
+[build.environment]
+  NODE_VERSION = "18"
 
 [[headers]]
   for = "/*"
@@ -14,3 +26,5 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "frame-ancestors 'none'"
+    Cache-Control = "public, max-age=0, must-revalidate"

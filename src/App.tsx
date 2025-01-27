@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { Hero } from './components/home/Hero';
@@ -18,9 +18,20 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { VendorOnboardingPage } from './pages/VendorOnboardingPage';
 import { VendorTermsPage } from './pages/VendorTermsPage';
+import { WorkxPage } from './pages/WorkxPage';
 import { PrivateRoute } from './components/auth/PrivateRoute';
 import { AdminRoute } from './components/auth/AdminRoute';
+import { VendorRoute } from './components/auth/VendorRoute';
 import { useContent } from './contexts/ContentContext';
+import { Button } from './components/ui/Button';
+
+const Layout = ({ children }: { children: React.ReactNode }) => (
+  <>
+    <Navbar />
+    <main className="flex-grow">{children}</main>
+    <Footer />
+  </>
+);
 
 export default function App() {
   const { loading } = useContent();
@@ -35,32 +46,45 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={
-            <>
-              <Hero />
-              <YoutubeExplainer />
-            </>
-          } />
-          <Route path="/auth" element={<AuthForm />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
-          <Route path="/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
-          <Route path="/vendor" element={<PrivateRoute><VendorDashboard /></PrivateRoute>} />
-          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/vend" element={<VendorOnboardingPage />} />
-          <Route path="/vendor-terms" element={<VendorTermsPage />} />
-        </Routes>
-      </main>
-      <Footer />
+      <Routes>
+        {/* Hidden admin routes - no layout */}
+        <Route path="/worx" element={<WorkxPage />} />
+        <Route path="/admin" element={<Navigate to="/worx" replace />} />
+        
+        {/* Routes with layout */}
+        <Route path="/" element={<Layout><Hero /><YoutubeExplainer /></Layout>} />
+        <Route path="/auth" element={<Layout><AuthForm /></Layout>} />
+        <Route path="/auth/callback" element={<Layout><AuthCallback /></Layout>} />
+        <Route path="/products" element={<Layout><ProductsPage /></Layout>} />
+        <Route path="/products/:id" element={<Layout><ProductDetailPage /></Layout>} />
+        <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+        <Route path="/faq" element={<Layout><FAQPage /></Layout>} />
+        <Route path="/privacy" element={<Layout><PrivacyPage /></Layout>} />
+        <Route path="/terms" element={<Layout><TermsPage /></Layout>} />
+        <Route path="/vend" element={<Layout><VendorOnboardingPage /></Layout>} />
+        <Route path="/vendor-terms" element={<Layout><VendorTermsPage /></Layout>} />
+
+        {/* Protected routes with layout */}
+        <Route path="/checkout" element={<Layout><PrivateRoute><CheckoutPage /></PrivateRoute></Layout>} />
+        <Route path="/dashboard" element={<Layout><PrivateRoute><UserDashboard /></PrivateRoute></Layout>} />
+        <Route path="/vendor" element={<Layout><VendorRoute><VendorDashboard /></VendorRoute></Layout>} />
+        <Route path="/admin-dashboard" element={<Layout><AdminRoute><AdminDashboard /></AdminRoute></Layout>} />
+
+        {/* 404 catch-all route */}
+        <Route path="*" element={
+          <Layout>
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
+                <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
+                <Button onClick={() => window.location.href = '/'}>
+                  Return Home
+                </Button>
+              </div>
+            </div>
+          </Layout>
+        } />
+      </Routes>
     </div>
   );
 }
