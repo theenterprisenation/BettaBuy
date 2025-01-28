@@ -11,18 +11,21 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   },
   global: {
     headers: {
       'x-application-name': 'foodrient'
     }
+  },
+  db: {
+    schema: 'public'
   }
 });
 
 // Add error handling for failed requests
 supabase.handleFailedRequest = async (error: any) => {
   console.error('Supabase request failed:', error);
-  // Implement retry logic if needed
-  return null;
+  throw error; // Propagate error for proper handling
 };

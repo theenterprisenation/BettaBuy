@@ -39,41 +39,99 @@ export function Hero() {
 
   return (
     <>
-      <div 
-        className="relative bg-gradient-to-b from-emerald-50/90 to-white min-h-[80vh] flex items-center"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1543362906-acfc16c67564?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/95 to-white/95" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-              <span className="block">Buy Together</span>
-              <span className="block text-emerald-600">Save Together</span>
-            </h1>
-            <p className="mt-3 max-w-md mx-auto text-base text-gray-600 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-              Join the smart food shopping revolution. Connect with others, buy in bulk, and save money while enjoying quality food.
-            </p>
-            <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-              <div className="rounded-md shadow">
+      <div className="relative min-h-screen overflow-hidden">
+        {/* Background with gradient overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1576181256399-834e3b3a49bf?q=80&w=2070&auto=format&fit=crop')",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-800/90 to-emerald-900/95" />
+        </div>
+
+        {/* Static Tomato Image - Increased size by 30% */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1582284540020-8acbe03f4924?q=80&w=500&auto=format&fit=crop"
+            alt="Fresh Tomatoes"
+            className="absolute w-[32rem] h-[32rem] object-cover rounded-full -top-16 -right-16 shadow-2xl"
+          />
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Text Content */}
+            <div className="text-left">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-6">
+                <span className="block">Buy Together</span>
+                <span className="block text-emerald-400">Save Together</span>
+              </h1>
+              <p className="mt-6 text-lg md:text-xl text-emerald-50/90 leading-relaxed max-w-xl">
+                Join the smart food shopping revolution. Connect with others, buy in bulk, 
+                and save money while enjoying quality food.
+              </p>
+              
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 {user ? (
-                  <Button size="lg" onClick={() => navigate('/products')}>
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate('/products')}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 text-lg shadow-lg hover:shadow-emerald-500/25 transform hover:-translate-y-0.5 transition-all duration-200"
+                  >
                     Browse Products
                   </Button>
                 ) : (
-                  <Button size="lg" onClick={() => navigate('/auth')}>
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate('/auth')}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 text-lg shadow-lg hover:shadow-emerald-500/25 transform hover:-translate-y-0.5 transition-all duration-200"
+                  >
                     Start Saving Today
                   </Button>
                 )}
-              </div>
-              <div className="mt-3 sm:mt-0 sm:ml-3">
-                <Button variant="outline" size="lg" onClick={() => setShowModal(true)}>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={() => setShowModal(true)}
+                  className="border-2 border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 px-8 py-4 text-lg transition-colors duration-200"
+                >
                   How It Works
                 </Button>
+              </div>
+
+              {/* Stats Section */}
+              <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
+                {[
+                  { label: 'Active Users', value: '2,000+' },
+                  { label: 'Vendors', value: '100+' },
+                  { label: 'Cities', value: '25+' },
+                  { label: 'Savings', value: 'Up to 30%' }
+                ].map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <p className="text-3xl font-bold text-emerald-400">{stat.value}</p>
+                    <p className="mt-1 text-sm text-emerald-100">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column - Featured Image */}
+            <div className="relative hidden lg:block">
+              <div className="relative">
+                <img
+                  src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?q=80&w=1470&auto=format&fit=crop"
+                  alt="Fresh produce"
+                  className="rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500"
+                />
+                <div className="absolute -bottom-10 -left-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1509358271058-acd22cc93898?q=80&w=1470&auto=format&fit=crop"
+                    alt="Healthy food"
+                    className="w-48 h-48 object-cover rounded-lg shadow-xl transform -rotate-6 hover:rotate-0 transition-transform duration-500"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -82,50 +140,39 @@ export function Hero() {
 
       {/* How It Works Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onClick={() => setShowModal(false)}></div>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-75 backdrop-blur-sm">
+          <div className="flex items-center justify-center min-h-screen px-4">
+            <div className="relative bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+              <button
+                onClick={() => setShowModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
 
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                How Group Buying Works
+              </h2>
 
-            <div className="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6">
-              <div className="absolute top-0 right-0 pt-4 pr-4">
-                <button
-                  type="button"
-                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
-                  onClick={() => setShowModal(false)}
-                >
-                  <span className="sr-only">Close</span>
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              <div className="sm:flex sm:items-start">
-                <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                  <h3 className="text-2xl leading-6 font-bold text-gray-900 mb-8" id="modal-title">
-                    How Group Buying Works
-                  </h3>
-                  <div className="space-y-8">
-                    {steps.map((step, index) => (
-                      <div key={index} className="flex items-start">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-12 w-12 rounded-md bg-emerald-100 text-emerald-600">
-                            <step.icon className="h-6 w-6" />
-                          </div>
-                        </div>
-                        <div className="ml-4">
-                          <h4 className="text-lg font-medium text-gray-900">{step.title}</h4>
-                          <p className="mt-1 text-gray-500">{step.description}</p>
-                        </div>
+              <div className="space-y-8">
+                {steps.map((step, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <step.icon className="h-6 w-6" />
                       </div>
-                    ))}
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
+                      <p className="mt-1 text-gray-600">{step.description}</p>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
 
-              <div className="mt-8 sm:mt-10">
+              <div className="mt-8">
                 <Button
-                  className="w-full justify-center"
+                  className="w-full justify-center text-lg py-3"
                   onClick={() => {
                     setShowModal(false);
                     if (!user) {

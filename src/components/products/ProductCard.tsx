@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Clock, Users, CheckCircle, AlertTriangle, MapPin, Star } from 'lucide-react';
 import { Button } from '../ui/Button';
 import type { Product } from '../../types';
@@ -17,6 +17,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const navigate = useNavigate();
   const remainingSlots = product.available_slots;
   const progress = ((product.minimum_slots - remainingSlots) / product.minimum_slots) * 100;
   const endDate = new Date(product.purchase_window_end);
@@ -109,11 +110,33 @@ export function ProductCard({ product }: ProductCardProps) {
             <Clock className="w-4 h-4 mr-1" />
             <span>{daysLeft} days left</span>
           </div>
-          <Link to={`/products/${product.id}`}>
-            <Button variant="primary" size="sm">
-              View Details
-            </Button>
-          </Link>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between p-4 border-t border-gray-100">
+        <div className="flex items-center text-sm text-gray-600">
+          <Users className="w-4 h-4 mr-1" />
+          <span>{remainingSlots} slots left</span>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate('/bulk-order', { 
+              state: { product, quantity: 1 }
+            })}
+            className="flex items-center"
+          >
+            <Users className="w-4 h-4 mr-1" />
+            Bulk Order
+          </Button>
+          <Button 
+            variant="primary" 
+            size="sm"
+            onClick={() => navigate(`/products/${product.id}`)}
+          >
+            View Details
+          </Button>
         </div>
       </div>
     </div>

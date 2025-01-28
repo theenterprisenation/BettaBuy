@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, UserPlus, LogIn, Store } from 'lucide-react';
+import { Mail, Lock, UserPlus, LogIn, Store, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
 
-type AuthMode = 'user' | 'vendor';
+type AuthMode = 'user' | 'vendor' | 'admin';
 type FormMode = 'signin' | 'signup';
 
 export function AuthForm() {
@@ -14,6 +14,7 @@ export function AuthForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,45 +23,69 @@ export function AuthForm() {
     setLoading(true);
 
     try {
-      if (formMode === 'signup') {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-      } else {
-        const { data: { user }, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        
-        if (error) throw error;
+      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        // If vendor login, check if user is actually a vendor
-        if (authMode === 'vendor') {
-          const { data: vendorData, error: vendorError } = await supabase
-            .from('vendors')
-            .select('id')
-            .eq('user_id', user?.id)
-            .single();
+      if (signInError) throw signInError;
 
-          if (vendorError || !vendorData) {
-            throw new Error('Account not found. Please sign up as a vendor first.');
-          }
-        }
+      if (!user) {
+        throw new Error('No user returned after successful login');
       }
-      
-      // Redirect based on auth mode
-      if (authMode === 'vendor') {
-        navigate('/vendor');
-      } else {
-        navigate('/');
+
+      // Check user role
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select(`
+          role_id,
+          roles!inner (
+            name
+          )
+        `)
+        .eq('id', user.id)
+        .single();
+
+      if (userError) {
+        console.error('Error fetching user role:', userError);
+        throw new Error('Error verifying user permissions');
+      }
+
+      const userRole = userData?.roles?.name;
+
+      // Validate role matches selected auth mode
+      if (authMode === 'admin' && userRole !== 'admin') {
+        throw new Error('Unauthorized access. Admin privileges required.');
+      }
+
+      if (authMode === 'vendor' && userRole !== 'vendor') {
+        throw new Error('Account not found. Please sign up as a vendor first.');
+      }
+
+      // Redirect based on role
+      switch (userRole) {
+        case 'admin':
+          navigate('/admin-dashboard', { replace: true });
+          break;
+        case 'vendor':
+          navigate('/vendor', { replace: true });
+          break;
+        case 'support':
+          navigate('/support-dashboard', { replace: true });
+          break;
+        default:
+          navigate('/', { replace: true });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Auth error:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred during authentication');
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -90,6 +115,20 @@ export function AuthForm() {
               <Store className="inline-block w-5 h-5 mr-2" />
               Vendor
             </button>
+            <button
+              onClick={() => {
+                setAuthMode('admin');
+                setFormMode('signin'); // Force signin mode for admin
+              }}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                authMode === 'admin'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Lock className="inline-block w-5 h-5 mr-2" />
+              Admin
+            </button>
           </div>
 
           <h2 className="text-3xl font-extrabold text-gray-900">
@@ -97,24 +136,26 @@ export function AuthForm() {
               ? `Create your ${authMode} account` 
               : `Sign in to your ${authMode} account`}
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {formMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
-            {authMode === 'vendor' && formMode === 'signup' ? (
-              <a
-                href="/vend"
-                className="font-medium text-primary-600 hover:text-primary-500"
-              >
-                Register as vendor
-              </a>
-            ) : (
-              <button
-                onClick={() => setFormMode(formMode === 'signup' ? 'signin' : 'signup')}
-                className="font-medium text-primary-600 hover:text-primary-500"
-              >
-                {formMode === 'signup' ? 'Sign in' : 'Sign up'}
-              </button>
-            )}
-          </p>
+          {authMode !== 'admin' && (
+            <p className="mt-2 text-sm text-gray-600">
+              {formMode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
+              {authMode === 'vendor' && formMode === 'signup' ? (
+                <a
+                  href="/vend"
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
+                  Register as vendor
+                </a>
+              ) : (
+                <button
+                  onClick={() => setFormMode(formMode === 'signup' ? 'signin' : 'signup')}
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
+                  {formMode === 'signup' ? 'Sign in' : 'Sign up'}
+                </button>
+              )}
+            </p>
+          )}
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -156,13 +197,24 @@ export function AuthForm() {
                   </div>
                   <input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                    )}
+                  </button>
                 </div>
               </div>
 

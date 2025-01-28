@@ -42,7 +42,23 @@ export function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
         </div>
 
         {cart.items.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">Your cart is empty</p>
+          <div className="text-center py-8">
+            <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
+            <p className="mt-2 text-gray-500">Your cart is empty</p>
+            <div className="mt-4 flex flex-col gap-2">
+              <Button onClick={() => navigate('/products')}>
+                Browse Products
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/bulk-order')}
+                className="flex items-center justify-center"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Create Bulk Order
+              </Button>
+            </div>
+          </div>
         ) : (
           <>
             <div className="max-h-96 overflow-y-auto">
@@ -95,11 +111,11 @@ export function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
             </div>
 
             <div className="mt-4 border-t border-gray-200 pt-4">
-              <div className="flex justify-between text-base font-medium text-gray-900">
+              <div className="flex justify-between text-base font-medium text-gray-900 mb-3">
                 <p>Total</p>
                 <p>${totalAmount.toFixed(2)}</p>
               </div>
-              <div className="mt-4 space-y-2">
+              <div className="space-y-2">
                 <Button
                   className="w-full"
                   onClick={handleCheckout}
@@ -108,12 +124,15 @@ export function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full flex items-center justify-center"
                   onClick={handleBulkOrder}
                 >
                   <Users className="w-4 h-4 mr-2" />
                   Create Bulk Order
                 </Button>
+                <p className="text-xs text-center text-gray-500 mt-2">
+                  Need to order for multiple recipients? Try our bulk order feature!
+                </p>
               </div>
             </div>
           </>

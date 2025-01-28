@@ -39,7 +39,7 @@ export function Navbar() {
             </span>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4">
             {mainMenu.map((item: { label: string; path: string }) => (
               <Link 
                 key={item.path} 
@@ -57,15 +57,15 @@ export function Navbar() {
               </Link>
             ))}
             {user ? (
-              <div className="flex items-center space-x-4 ml-4">
+              <div className="flex items-center space-x-3">
                 <div className="relative">
                   <button
                     onClick={() => setIsCartOpen(!isCartOpen)}
-                    className="p-2 hover:bg-gray-100 rounded-full relative"
+                    className="p-1.5 hover:bg-gray-100 rounded-full relative transition-colors"
                   >
-                    <ShoppingCart className="h-6 w-6 text-gray-600" />
+                    <ShoppingCart className="h-5 w-5 text-gray-600" />
                     {totalItems > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                         {totalItems}
                       </span>
                     )}
@@ -76,23 +76,26 @@ export function Navbar() {
                   <Link to="/admin">
                     <Button 
                       variant="outline"
-                      className="hover:bg-primary-50 transition-colors"
+                      size="sm"
+                      className="text-xs px-3 py-1.5 hover:bg-primary-50 transition-colors shadow-sm border-gray-200"
                     >
-                      Admin Dashboard
+                      Admin
                     </Button>
                   </Link>
                 )}
                 <Link to="/dashboard">
                   <Button 
                     variant="outline"
-                    className="hover:bg-primary-50 transition-colors"
+                    size="sm"
+                    className="text-xs px-3 py-1.5 hover:bg-primary-50 transition-colors shadow-sm border-gray-200"
                   >
                     My Orders
                   </Button>
                 </Link>
                 <Button 
                   variant="danger"
-                  className="hover:bg-danger-600 transition-colors"
+                  size="sm"
+                  className="text-xs px-3 py-1.5 hover:bg-danger-600 transition-colors shadow-sm"
                   onClick={handleSignOut}
                 >
                   Sign Out
