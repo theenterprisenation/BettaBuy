@@ -50,12 +50,12 @@ export function Hero() {
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-900/95 via-emerald-800/90 to-emerald-900/95" />
         </div>
 
-        {/* Static Tomato Image - Increased size by 30% */}
+        {/* Responsive Tomato Image */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <img
             src="https://images.unsplash.com/photo-1582284540020-8acbe03f4924?q=80&w=500&auto=format&fit=crop"
             alt="Fresh Tomatoes"
-            className="absolute w-[32rem] h-[32rem] object-cover rounded-full -top-16 -right-16 shadow-2xl"
+            className="absolute w-[80vw] h-[80vw] md:w-[30vw] md:h-[30vw] lg:w-[45rem] lg:h-[45rem] object-cover rounded-full -top-32 -right-32 xl:-right-16 shadow-2xl transform -rotate-12 animate-float-slow"
           />
         </div>
 
@@ -117,22 +117,9 @@ export function Hero() {
               </div>
             </div>
 
-            {/* Right Column - Featured Image */}
+            {/* Right Column - Empty Space */}
             <div className="relative hidden lg:block">
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?q=80&w=1470&auto=format&fit=crop"
-                  alt="Fresh produce"
-                  className="rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500"
-                />
-                <div className="absolute -bottom-10 -left-10">
-                  <img
-                    src="https://images.unsplash.com/photo-1509358271058-acd22cc93898?q=80&w=1470&auto=format&fit=crop"
-                    alt="Healthy food"
-                    className="w-48 h-48 object-cover rounded-lg shadow-xl transform -rotate-6 hover:rotate-0 transition-transform duration-500"
-                  />
-                </div>
-              </div>
+              {/* Space for floating image */}
             </div>
           </div>
         </div>

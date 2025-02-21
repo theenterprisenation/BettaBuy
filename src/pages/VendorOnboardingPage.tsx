@@ -125,10 +125,9 @@ export function VendorOnboardingPage() {
           Join our platform and start selling your products to group buyers
         </p>
         <div className="mt-4 bg-primary-50 border border-primary-200 rounded-lg p-4 text-primary-800">
-          <h3 className="font-semibold">Important Fee Information</h3>
+          <h3 className="font-semibold">Important Notice</h3>
           <p className="text-sm mt-1">
-            Our platform charges a 5% fee on each successful transaction. Please factor this into your product pricing.
-            You will receive 95% of each payment directly to your registered bank account.
+            We strongly advise that you thoroughly review our Vendor Terms and Conditions before proceeding with your registration on this platform. Foodrient maintains a strict zero-tolerance policy toward fraud and malpractice. Any fraudulent activities will be met with immediate legal action, pursued to the fullest extent permitted under the laws of the Federal Republic of Nigeria.
           </p>
         </div>
       </div>

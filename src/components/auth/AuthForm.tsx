@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, UserPlus, LogIn, Store, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
 
-type AuthMode = 'user' | 'vendor' | 'admin';
+type AuthMode = 'user' | 'vendor';
 type FormMode = 'signin' | 'signup';
 
 export function AuthForm() {
@@ -52,11 +52,6 @@ export function AuthForm() {
       }
 
       const userRole = userData?.roles?.name;
-
-      // Validate role matches selected auth mode
-      if (authMode === 'admin' && userRole !== 'admin') {
-        throw new Error('Unauthorized access. Admin privileges required.');
-      }
 
       if (authMode === 'vendor' && userRole !== 'vendor') {
         throw new Error('Account not found. Please sign up as a vendor first.');
@@ -114,20 +109,6 @@ export function AuthForm() {
             >
               <Store className="inline-block w-5 h-5 mr-2" />
               Vendor
-            </button>
-            <button
-              onClick={() => {
-                setAuthMode('admin');
-                setFormMode('signin'); // Force signin mode for admin
-              }}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                authMode === 'admin'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <Lock className="inline-block w-5 h-5 mr-2" />
-              Admin
             </button>
           </div>
 
@@ -216,29 +197,37 @@ export function AuthForm() {
                     )}
                   </button>
                 </div>
+                {formMode === 'signin' && (
+                  <div className="text-right mt-1">
+                    <Link
+                      to="/auth/reset-password"
+                      className="text-sm font-medium text-primary-600 hover:text-primary-500"
+                    >
+                      Forgot your password?
+                    </Link>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <Button
-                  type="submit"
-                  className="w-full flex justify-center items-center"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : formMode === 'signup' ? (
-                    <>
-                      <UserPlus className="w-5 h-5 mr-2" />
-                      Sign Up
-                    </>
-                  ) : (
-                    <>
-                      <LogIn className="w-5 h-5 mr-2" />
-                      Sign In
-                    </>
-                  )}
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                className="w-full flex justify-center items-center"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : formMode === 'signup' ? (
+                  <>
+                    <UserPlus className="w-5 h-5 mr-2" />
+                    Sign Up
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-5 h-5 mr-2" />
+                    Sign In
+                  </>
+                )}
+              </Button>
             </form>
           </div>
         </div>

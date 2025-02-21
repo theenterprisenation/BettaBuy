@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getVendorByUserId } from '../lib/vendors';
 import { getVendorOrders } from '../lib/orders';
-import { Store, Package2, Users, TrendingUp, Ban as Bank } from 'lucide-react';
+import { Store, Package2, Users, TrendingUp, Ban as Bank, Building2, Settings } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { BankDetailsForm } from '../components/vendor/BankDetailsForm';
+import { BankDetailsChangeRequest } from '../components/vendor/BankDetailsChangeRequest';
+import { VendorShopSettings } from '../components/vendor/VendorShopSettings';
+import { useAuth } from '../contexts/AuthContext';
+import { ProfileSection } from '../components/profile/ProfileSection';
 
 export function VendorDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [showBankDetails, setShowBankDetails] = useState(false);
-  
+  const { user } = useAuth();
+  const [showBankDetailsModal, setShowBankDetailsModal] = useState(false);
+  const [showShopSettings, setShowShopSettings] = useState(false);
   const queryClient = useQueryClient();
+
   const { data: vendor } = useQuery({
     queryKey: ['vendor'],
     queryFn: getVendorByUserId
@@ -39,22 +42,7 @@ export function VendorDashboard() {
     enabled: !!vendor
   });
 
-  if (!vendor && !isRegistering) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-medium text-gray-900">Become a Vendor</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Start your journey as a vendor and create group buy opportunities
-          </p>
-          <div className="mt-6">
-            <Button onClick={() => setIsRegistering(true)}>Register as Vendor</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (!user) return null;
 
   const stats = [
     {
@@ -69,151 +57,163 @@ export function VendorDashboard() {
     },
     {
       name: 'Total Revenue',
-      value: `$${orders?.reduce((sum, order) => sum + order.total_amount, 0).toFixed(2) || '0.00'}`,
+      value: `₦${orders?.reduce((sum, order) => sum + order.total_amount, 0).toLocaleString() || '0'}`,
       icon: TrendingUp,
     },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Vendor Dashboard</h1>
-        <p className="mt-2 text-gray-600">{vendor?.business_name}</p>
-        
-        {vendor?.is_verified && !bankDetails && (
-          <div className="mt-4 bg-warning-50 border border-warning-200 p-4 rounded-md">
-            <div className="flex">
-              <Bank className="h-5 w-5 text-warning-400" />
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-warning-800">
-                  Bank Details Required
-                </h3>
-                <div className="mt-2 text-sm text-warning-700">
-                  <p>Please add your bank account details to receive payments.</p>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="mt-3"
-                    onClick={() => setShowBankDetails(true)}
-                  >
-                    Add Bank Details
-                  </Button>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Vendor Dashboard</h1>
+          <p className="mt-2 text-gray-600">{vendor?.business_name}</p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => setShowShopSettings(true)}
+          className="flex items-center"
+        >
+          <Settings className="h-4 w-4 mr-2" />
+          Shop Settings
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Profile and Bank Details Section */}
+        <div className="space-y-8">
+          <ProfileSection userId={user.id} />
+
+          {/* Bank Details Section */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center">
+                <Building2 className="h-6 w-6 text-primary-600 mr-2" />
+                <h3 className="text-lg font-medium text-gray-900">Bank Details</h3>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowBankDetailsModal(true)}
+              >
+                Request Change
+              </Button>
+            </div>
+
+            {bankDetails ? (
+              <div className="mt-4 space-y-2">
+                <p className="text-sm">
+                  <span className="font-medium text-gray-500">Account Name:</span>{' '}
+                  <span className="text-gray-900">{bankDetails.account_name}</span>
+                </p>
+                <p className="text-sm">
+                  <span className="font-medium text-gray-500">Bank Name:</span>{' '}
+                  <span className="text-gray-900">{bankDetails.bank_name}</span>
+                </p>
+                <p className="text-sm">
+                  <span className="font-medium text-gray-500">Account Number:</span>{' '}
+                  <span className="text-gray-900">{bankDetails.account_number}</span>
+                </p>
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-gray-500">No bank details provided</p>
+            )}
+          </div>
+        </div>
+
+        {/* Stats and Orders Section */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stats.map((stat) => (
+              <div
+                key={stat.name}
+                className="bg-white overflow-hidden shadow rounded-lg p-6"
+              >
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <stat.icon className="h-6 w-6 text-gray-400" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        {stat.name}
+                      </dt>
+                      <dd className="text-lg font-semibold text-gray-900">
+                        {stat.value}
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recent Orders */}
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-6">Recent Orders</h2>
+              <div className="space-y-4">
+                {orders?.slice(0, 5).map((order) => (
+                  <div key={order.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <img
+                          src={order.products.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'}
+                          alt={order.products.name}
+                          className="h-16 w-16 object-cover rounded"
+                        />
+                        <div className="ml-4">
+                          <h4 className="text-lg font-semibold text-gray-900">
+                            {order.products.name}
+                          </h4>
+                          <p className="text-sm text-gray-500">
+                            {order.users.full_name} ({order.users.email})
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-semibold text-gray-900">
+                          ₦{order.total_amount.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Qty: {order.quantity}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Bank Details Modal */}
-      {showBankDetails && (
+      {/* Bank Details Change Request Modal */}
+      {showBankDetailsModal && vendor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              {bankDetails ? 'Update Bank Details' : 'Add Bank Details'}
-            </h2>
-            <BankDetailsForm
-              vendorId={vendor!.id}
-              existingDetails={bankDetails}
-              onSuccess={() => setShowBankDetails(false)}
+          <div className="max-w-md w-full mx-4">
+            <BankDetailsChangeRequest
+              vendorId={vendor.id}
+              onClose={() => setShowBankDetailsModal(false)}
             />
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {stats.map((stat) => (
-          <div
-            key={stat.name}
-            className="bg-white overflow-hidden shadow rounded-lg"
-          >
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <stat.icon className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      {stat.name}
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stat.value}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
+      {/* Shop Settings Modal */}
+      {showShopSettings && vendor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="max-w-md w-full mx-4">
+            <VendorShopSettings
+              vendorId={vendor.id}
+              currentTheme={vendor.shop_theme}
+              currentLogo={vendor.logo_url}
+              onClose={() => setShowShopSettings(false)}
+            />
           </div>
-        ))}
-      </div>
-
-      <div className="mt-8">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`${
-                activeTab === 'overview'
-                  ? 'border-emerald-500 text-emerald-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('orders')}
-              className={`${
-                activeTab === 'orders'
-                  ? 'border-emerald-500 text-emerald-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm`}
-            >
-              Orders
-            </button>
-          </nav>
         </div>
-
-        <div className="mt-8">
-          {activeTab === 'orders' && (
-            <div className="bg-white shadow overflow-hidden sm:rounded-md">
-              <ul className="divide-y divide-gray-200">
-                {orders?.map((order) => (
-                  <li key={order.id}>
-                    <div className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <img
-                            src={order.products.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'}
-                            alt={order.products.name}
-                            className="h-16 w-16 object-cover rounded"
-                          />
-                          <div className="ml-4">
-                            <h4 className="text-lg font-semibold text-gray-900">
-                              {order.products.name}
-                            </h4>
-                            <p className="text-sm text-gray-500">
-                              {order.users.full_name} ({order.users.email})
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900">
-                            ${order.total_amount}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Qty: {order.quantity}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

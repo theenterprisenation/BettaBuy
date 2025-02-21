@@ -32,7 +32,7 @@ Important Information:
    - We cooperate fully with law enforcement in cases of fraud
 
 5. Next Steps
-   - Log in to your vendor dashboard at https://foodrient.com/vendor
+   - Log in to your vendor dashboard at https://foodrient.com/auth
    - Complete your bank account details for payments
    - Start listing your products with bulk pricing
    - Ensure your product descriptions and images are clear and accurate

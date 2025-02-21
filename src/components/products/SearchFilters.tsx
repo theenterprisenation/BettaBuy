@@ -83,7 +83,7 @@ export function SearchFilters({
         </div>
         <input
           type="text"
-          placeholder="Search for products..."
+          placeholder="Search for products or vendors..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="block w-full pl-10 pr-12 py-3 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"

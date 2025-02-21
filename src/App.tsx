@@ -6,6 +6,8 @@ import { Hero } from './components/home/Hero';
 import { YoutubeExplainer } from './components/home/YoutubeExplainer';
 import { AuthForm } from './components/auth/AuthForm';
 import { AuthCallback } from './components/auth/AuthCallback';
+import { PasswordResetForm } from './components/auth/PasswordResetForm';
+import { PasswordResetConfirmation } from './components/auth/PasswordResetConfirmation';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -50,6 +52,10 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Routes>
+        {/* Auth routes without layout */}
+        <Route path="/auth/reset-password" element={<PasswordResetForm />} />
+        <Route path="/auth/reset-confirmation" element={<PasswordResetConfirmation />} />
+
         {/* Hidden admin/support routes - no layout */}
         <Route path="/worx" element={<WorkxPage />} />
         <Route path="/admin" element={<Navigate to="/worx" replace />} />
